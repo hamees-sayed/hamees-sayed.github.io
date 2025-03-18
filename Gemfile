@@ -17,5 +17,4 @@ group :jekyll_plugins do
     gem 'webrick'
     gem 'htmlcompressor'
     gem 'htmlbeautifier'
-    gem 'uri', '~> 1.0.3'
 end
