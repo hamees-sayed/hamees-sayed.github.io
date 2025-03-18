@@ -27,6 +27,10 @@ jobs:
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gems-
+    - name: Update Bundler
+      run: |
+        gem update bundler
+        gem install bundler -v 2.5.23  # Use the latest Bundler version if possible
     - name: Install deps
       run: |
         gem install bundler
