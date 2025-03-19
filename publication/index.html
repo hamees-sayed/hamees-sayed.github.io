@@ -10,10 +10,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>hamees; | blog</title>
+    <title>hamees; | Publications</title>
     <meta name="author" content="Sayed Hamees Ul Hasan" />
-    <meta name="description" content="my personal website
-" />
+    <meta name="description" content="My Research Publications." />
 
 
     <!-- Bootstrap & MDB -->
@@ -31,7 +30,7 @@
     <!-- Styles -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔭</text></svg>">
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://hamees-sayed.github.io/blog/">
+    <link rel="canonical" href="https://hamees-sayed.github.io/publication/">
 
     <!-- Dark Mode -->
     <script src="/assets/js/theme.js"></script>
@@ -73,8 +72,8 @@
               </li>
               
               <!-- Blog -->
-              <li class="nav-item active">
-                <a class="nav-link" href="/blog/">blog<span class="sr-only">(current)</span></a>
+              <li class="nav-item ">
+                <a class="nav-link" href="/blog/">blog</a>
               </li>
 
               <!-- Other pages -->
@@ -96,8 +95,8 @@
               </li>
 
               <!-- Toogle theme mode -->
-              <div class = "toggle-container">
-                <a id = "light-toggle">
+              <div class="toggle-container">
+                <a id="light-toggle">
                   <i class="fas fa-moon"></i>
                   <i class="fas fa-sun"></i>
                 </a>
@@ -110,112 +109,64 @@
 
     <!-- Content -->
     <div class="container mt-5">
-      <div class="post">
+      <!-- page.html -->
+        <div class="post">
 
-  <div class="header-bar">
-    <h1>hamees's blog</h1>
-    <h2></h2>
-  </div>
+          <header class="post-header">
+            <h1 class="post-title">Publications</h1>
+            <p class="post-description">My Research Publications.</p>
+          </header>
 
+          <article>
+            
+<div class="publications">
 
-  <ul class="post-list">
-    
-      
-        
-        
-        
-        
+<ol class="bibliography"><li>
+<!-- _layouts/bib.html -->
+      <div class="row">
+        <div class="col-sm-2 abbr"></div>
 
-        <li>
-          <h3><a class="post-title" href="/blog/2023/go-cli/">How to build a CLI App to track IP Address in Go</a>
-          </h3>
-          <p>My experience building a project while learning Golang</p>
-          <p class="post-meta"> 10 min read &nbsp; &middot; &nbsp;
-            December 18, 2023
-          </p>
-          <p class="post-tags">
-              
+        <!-- Entry bib key -->
+        <div id="sayed-etal-2024-spring" class="col-sm-8">
+        
+          <!-- Title -->
+          <div class="title">SPRING Lab IITM‘s Submission to Low Resource Indic Language Translation Shared Task</div>
+          <!-- Author -->
+          <div class="author">
+                  <em>Sayed, Hamees</em>, Joglekar, Advait, and Umesh, Srinivasan
+          </div>
 
-              
-        </p>
-        </li>
-      
-    
-      
+          <!-- Journal/Book title and date -->
+          <div class="periodical">
+            <em>In Proceedings of the Ninth Conference on Machine Translation</em> Nov 2024
+          </div>
         
-        
-        
-        
+          <!-- Links/Buttons -->
+          <div class="links">
+            <a class="abstract btn btn-sm z-depth-0" role="button">Abs</a>
+          </div>
 
-        <li>
-          <h3><a class="post-title" href="/blog/2023/git-p3/">Git Internals 101: The Fundamentals of Git's Internal Architecture (Part 3 of 3)</a>
-          </h3>
-          <p>Series of articles explaining the fundamental components of Git</p>
-          <p class="post-meta"> 6 min read &nbsp; &middot; &nbsp;
-            November 15, 2023
-          </p>
-          <p class="post-tags">
-              
-
-              
-        </p>
-        </li>
-      
-    
-      
-        
-        
-        
-        
-
-        <li>
-          <h3><a class="post-title" href="/blog/2023/git-p2/">Git SHA 101: The Fundamentals of Git's Internal Architecture (Part 2 of 3)</a>
-          </h3>
-          <p>Series of articles explaining the fundamental components of Git</p>
-          <p class="post-meta"> 6 min read &nbsp; &middot; &nbsp;
-            November 10, 2023
-          </p>
-          <p class="post-tags">
-              
-
-              
-        </p>
-        </li>
-      
-    
-      
-        
-        
-        
-        
-
-        <li>
-          <h3><a class="post-title" href="/blog/2023/git-p1/">Git Objects 101: The Fundamentals of Git's Internal Architecture (Part 1 of 3)</a>
-          </h3>
-          <p>Series of articles explaining the fundamental components of Git</p>
-          <p class="post-meta"> 5 min read &nbsp; &middot; &nbsp;
-            November 5, 2023
-          </p>
-          <p class="post-tags">
-              
-
-              
-        </p>
-        </li>
-      
-    
-  </ul>
-
-  
+          <!-- Hidden abstract block -->
+          <div class="abstract hidden">
+            <p>We develop a robust translation model for four low-resource Indic languages: Khasi, Mizo, Manipuri, and Assamese. Our approach includes a comprehensive pipeline from data collection and preprocessing to training and evaluation, leveraging data from WMT task datasets, BPCC, PMIndia, and OpenLanguageData. To address the scarcity of bilingual data, we use back-translation techniques on monolingual datasets for Mizo and Khasi, significantly expanding our training corpus. We fine-tune the pre-trained NLLB 3.3B model for Assamese, Mizo, and Manipuri, achieving improved performance over the baseline. For Khasi, which is not supported by the NLLB model, we introduce special tokens and train the model on our Khasi corpus. Our training involves masked language modelling, followed by fine-tuning for English-to-Indic and Indic-to-English translations.</p>
+          </div>
+        </div>
+      </div>
+</li></ol>
 
 </div>
+
+
+          </article>
+
+        </div>
 
     </div>
 
     <!-- Footer -->    
     <footer class="fixed-bottom">
       <div class="container mt-0">
-        &copy; Copyright 2025 Sayed Hamees Ul Hasan. Powered by <a href="http://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
+        © Copyright 2025 Sayed Hamees Ul Hasan. Powered by <a href="http://jekyllrb.com/" target="_blank" rel="noopener noreferrer">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" target="_blank" rel="noopener noreferrer">al-folio</a> theme.
 Last updated: March 19, 2025.
       </div>
     </footer>
