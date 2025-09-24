@@ -2,7 +2,7 @@
 layout: page
 permalink: /links/
 title: Useful Links
-description: I plan to put up some interesting & useful links that I think are awsome!
+description: I plan to put up some interesting & useful links that I think are awesome!
 nav: false
 ---
 
