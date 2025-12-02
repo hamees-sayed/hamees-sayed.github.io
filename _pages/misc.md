@@ -4,8 +4,8 @@ title: misc
 nav: true
 dropdown: true
 children:
-    - title: gallery
-      permalink: /gallery
+    - title: links
+      permalink: /link
 ---
     - title: links
       permalink: /links
