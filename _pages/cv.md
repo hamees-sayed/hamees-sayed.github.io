@@ -1,7 +1,7 @@
 ---
 layout: page
 title: cv
-permalink: /_pages/cv/
+permalink: /cv/
 description: Curriculum Vitae
 nav: true
 redirect_to: https://drive.google.com/file/d/1fJxfgIhN0RWefqB_MQq-BuD1HwNivwNu/view?usp=sharing

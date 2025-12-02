@@ -27,7 +27,7 @@ Apart from academics, I like playing basketball and reading comics — Solo Leve
               {%- assign news = site.news | reverse -%}
               {% for item in news limit: site.news_limit %}
                 <tr>
-                  <th scope="row">{{ item.date | date: "%b, %Y" }}</th>
+                  <th scope="row">{{ item.date | date: "%b %-d, %Y" }}</th>
                   <td>
                     {% if item.inline -%}
                       {{ item.content | remove: '<p>' | remove: '</p>' | emojify }}
