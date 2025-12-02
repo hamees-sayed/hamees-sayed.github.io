@@ -14,9 +14,9 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi there! I'm Hamees Ul Hasan, but you can call me Hamees. I'm currently pursuing my BS at Indian Institute of Technology (IIT) Madras, where I'm majoring in Data Science and Application. My interests lie in Statistics, Deep Learning, Research, and Open Source.
+Hi there! I'm Hamees. I'm currently pursuing my BS at Indian Institute of Technology Madras, where I'm majoring in Data Science and Application. My interests lie in Statistics, Deep Learning, Research, and Open Source.
 
-Apart from academics, I like playing basketball and reading comics — Solo Leveling is my favorite! I also enjoy teaching and have a passion for sharing knowledge. 
+Apart from academics, I like playing basketball and reading comics — Solo Leveling is my favorite! I also enjoy teaching and like to share what I know about the world :p 
 
 
 <div class="news">
