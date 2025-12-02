@@ -14,9 +14,9 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi there! I'm Hamees. I'm currently pursuing my BS at Indian Institute of Technology Madras, where I'm majoring in Data Science and Application. My interests lie in Statistics, Deep Learning, Research, and Open Source.
+Hi there! I’m Hamees, currently pursuing my BS at IIT Madras in Data Science and Applications. I work across speech, language, and applied scientific research, and I enjoy building things that actually make it into the real world. I’m also active in open source and spend a lot of time experimenting with models, tools, and ideas that push my understanding forward.
 
-Apart from academics, I like playing basketball and reading comics — Solo Leveling is my favorite! I also enjoy teaching and like to share what I know about the world :p 
+Outside tech, you’ll usually find me on a basketball court or reading manga. I also enjoy teaching and sharing what I learn along the way.
 
 
 <div class="news">
