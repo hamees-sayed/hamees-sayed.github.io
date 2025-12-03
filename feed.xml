@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://hamees-sayed.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://hamees-sayed.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2025-12-03T17:14:44+00:00</updated><id>https://hamees-sayed.github.io/feed.xml</id><title type="html">hamees;</title><subtitle>my personal website
+</subtitle><entry><title type="html">How to build a CLI App to track IP Address in Go</title><link href="https://hamees-sayed.github.io/blog/2023/go-cli/" rel="alternate" type="text/html" title="How to build a CLI App to track IP Address in Go" /><published>2023-12-18T00:00:00+00:00</published><updated>2023-12-18T00:00:00+00:00</updated><id>https://hamees-sayed.github.io/blog/2023/go-cli</id><content type="html" xml:base="https://hamees-sayed.github.io/blog/2023/go-cli/"><![CDATA[<d-contents>
+  <nav class="l-text figcaption">
+  <h3>Contents</h3>
+    <div><a href="#heading-initialize-go-module">Initialize Go Module</a></div>
+    <div><a href="#heading-creating-maingo-file">Creating main.go file</a></div>
+    <div><a href="#heading-how-to-add-a-new-command">How to add a new command?</a></div>
+    <div><a href="#heading-how-to-get-the-ip-location">How to get the IP Location?</a></div>
+    <div><a href="#heading-adding-the-version-flag">Adding the Version Flag</a></div>
+    <div><a href="#heading-conclusion">Conclusion</a></div>
+    <div><a href="#heading-get-the-source-code">Get the source code</a></div>
+    <!-- <ul>
+       <li><a href="#subsection">Subsection</a></li>
+    </ul> -->
+  </nav>
+</d-contents>
+
+<p>The command-line interface, or the CLI, is a powerful tool for interacting with the computer. It allows us to quickly and easily run commands, manipulate files, and automate tasks. In this blog, we'll be building an IP Address tracker in Golang using Cobra, a popular package for building CLIs in the Go programming language. Cobra provides a simple and intuitive way to create powerful and user-friendly command-line applications. We will learn how to use cobra to create a basic CLI and how to add features like flags and subcommands. By the end of this blog, you will have a solid foundation for building your own CLIs using cobra.</p>
+<p>We'll also learn to work with APIs in Golang.</p>
+
+<p>Prerequisites: Go is installed locally and basic familiarity with Go syntax.</p>
+<h1 id="heading-initialize-go-module">Initialize Go Module</h1>
+<p>The first thing you have to do when creating a Golang project is to initialize the Go module by typing <code>go mod init iptracker</code> in the terminal by navigating to the project's root directory.</p>
+<blockquote>
+<p>Note: You can replace <code>iptracker</code> in the above command with the project's github URL as well.</p>
+</blockquote>
+<pre><code class="lang-bash">$ go mod init iptracker
+</code></pre>
+<p>Next, we'll import the cobra package, you can check the documentation here: <a target="_blank" href="https://github.com/spf13/cobra">https://github.com/spf13/cobra</a></p>
+<p>The first thing we have to do is import the library, to do that we'll type the following command in the root directory of the project.</p>
+<pre><code class="lang-bash">$ go get -u github.com/spf13/cobra@latest
+</code></pre>
+<p>The file structure for a Cobra-based application typically looks like this:</p>
+<ul>
+<li><p><code>main.go</code> <em>:</em> This is the entry point for the application and contains the code for creating and executing the cobra command tree.</p>
+</li>
+<li><p><code>cmd</code> <em>directory :</em> The directory contains the code for the different commands and subcommands within the application. Each command has it's own subdirectory within the <code>cmd</code> directory, and each subdirectory contains a file named <code>&lt;command&gt;.go</code> that contains the code for that command.</p>
+</li>
+<li><p><code>pkg</code> <em>directory :</em> This directory contains any reusable packages that are used by the commands within the <code>cmd</code> directory.</p>
+</li>
+</ul>
+<p>For example, suppose you have an application with two commands, <code>serve</code> and <code>migrate</code>, and the serve command has two subcommands, <code>start</code> and <code>stop</code>. The file structure for this application might look like this:</p>
+<pre><code class="lang-bash">.
+├── main.go
+└── cmd
+    ├── migrate
+    │   └── migrate.go
+    └── serve
+        ├── start
+        │   └── start.go
+        └── stop
+            └── stop.go
+</code></pre>
+<h1 id="heading-creating-maingo-file">Creating main.go file</h1>
+<p>From the cobra docs, we'll simply copy-paste the contents into the <code>main.go</code> file as follows:</p>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"iptracker/cmd"</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+    cmd.Execute()
+}
+</code></pre>
+<p>Next, we'll create <code>cmd</code> directory to store all the CLI commands, and then create a <code>root.go</code> file inside the <code>cmd</code> directory. Lastly, copy-paste the code from docs into <code>root.go</code>.</p>
+<p>The code structure should look like this:</p>
+<pre><code class="lang-go">.
+├── main.<span class="hljs-keyword">go</span>
+├── <span class="hljs-keyword">go</span>.mod
+├── <span class="hljs-keyword">go</span>.sum
+└── cmd
+    ├── root.<span class="hljs-keyword">go</span>
+</code></pre>
+<blockquote>
+<p>Note: The above code is taken from Cobra package user guide with slight changes according to our requirements. You can check the docs here: <a target="_blank" href="https://github.com/spf13/cobra/blob/main/user_guide.md">https://github.com/spf13/cobra/blob/main/user_guide.md</a></p>
+</blockquote>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> cmd
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"github.com/spf13/cobra"</span>
+)
+
+<span class="hljs-keyword">var</span> (
+    rootCmd = &amp;cobra.Command{
+        Use:   <span class="hljs-string">"iptracker"</span>,
+        Short: <span class="hljs-string">"CLI App to track IP Addresses."</span>,
+        Long:  <span class="hljs-string">`CLI App to track IP Addresses.`</span>,
+    }
+)
+
+<span class="hljs-comment">// Execute executes the root command.</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Execute</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    <span class="hljs-keyword">return</span> rootCmd.Execute()
+}
+</code></pre>
+<p>Now there are three ways to run the above code.</p>
+<ol>
+<li><p>Using <code>go run main.go</code> we can run the code.</p>
+</li>
+<li><p>Secondly, using <code>go build</code> will create a binary in the root folder of the project, which we can then execute locally.</p>
+</li>
+<li><p>Lastly, the most effective way is to use <code>go install</code>, this command will build the file and put the binary into the $GOPATH<em>.</em> So we'll first run <code>go install</code> in the root directory of the project and voila you can now use the command <code>iptracker</code> globally. Running these two commands should give a similar output:</p>
+</li>
+</ol>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670694356451-Screenshot%2520from%25202022-12-10%252023-15-44.png?type=webp" alt="img" /></p>
+<h1 id="heading-how-to-add-a-new-command">How to add a new command?</h1>
+<p>To add a new command, we'll create a new file in the <code>cmd</code> directory with the name of the command, in this case, I'll create a new file with the name <code>track.go</code>. Alternatively, we can also use the COBRA-CLI generator which you can find in the link I shared above.</p>
+<p>Folder Structure at this point:</p>
+<pre><code class="lang-bash">.
+├── main.go
+├── go.mod
+├── go.sum
+└── cmd
+    ├── root.go
+    └── track.go
+</code></pre>
+<p>In the <code>track.go</code> we'll add the following content, along with the following packages that we'll require:</p>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> cmd
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"encoding/json"</span>
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"io"</span>
+    <span class="hljs-string">"log"</span>
+    <span class="hljs-string">"net/http"</span>
+
+    <span class="hljs-string">"github.com/spf13/cobra"</span>
+)
+
+<span class="hljs-keyword">var</span> trackCmd = &amp;cobra.Command{
+    Use:   <span class="hljs-string">"track"</span>,
+    Short: <span class="hljs-string">"Track the IP with this command."</span>,
+    Long:  <span class="hljs-string">`Track the IP with this command.`</span>,
+    Run: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(cmd *cobra.Command, args []<span class="hljs-keyword">string</span>)</span></span> {
+        fmt.Println(<span class="hljs-string">"track called"</span>)
+    },
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> {
+    rootCmd.AddCommand(trackCmd)
+}
+</code></pre>
+<p>Now, the cycle to build the code and test it repeats, first run <code>go install</code> then <code>iptracker track</code> to test if the newly added command is working. The output should be similar to this:</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670695399351-Screenshot%2520from%25202022-12-10%252023-32-33.png?type=webp" alt="img" /></p>
+<p>If you noticed here, the track command prints <em>"track called".</em> In this application, we want to pass an argument which is an IP Address. So we'll update the <code>trackCmd</code> variable from the above code and instead of printing <em>"track called"</em>, we'll instead call the argument. Along with that, we'll also add an if-else statement to check whether the IP Address is provided and a for loop because we might also receive multiple arguments.</p>
+<pre><code class="lang-go"><span class="hljs-keyword">var</span> trackCmd = &amp;cobra.Command{
+    Use:   <span class="hljs-string">"track"</span>,
+    Short: <span class="hljs-string">"Track the IP with this command."</span>,
+    Long:  <span class="hljs-string">`Track the IP with this command.`</span>,
+
+    <span class="hljs-comment">// I updated the code here 👇</span>
+    Run: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(cmd *cobra.Command, args []<span class="hljs-keyword">string</span>)</span></span> {
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">len</span>(args) &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">for</span> _, ipAddress := <span class="hljs-keyword">range</span> args {
+                fmt.Println(ipAddress)
+            }
+        } <span class="hljs-keyword">else</span> {
+            fmt.Println(<span class="hljs-string">"Please provide an IP Address to track."</span>)
+        }
+    },
+}
+</code></pre>
+<p>And it works!</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670696254793-Screenshot%2520from%25202022-12-10%252023-47-19.png?type=webp" alt="img" /></p>
+<h1 id="heading-how-to-get-the-ip-location">How to get the IP Location?</h1>
+<p>To get the data of the given IP Address we'll use an Open Public API, namely <a target="_blank" href="https://ipinfo.io/">https://ipinfo.io/</a></p>
+<p>The format to get the IP data is as follows: <code>https://ipinfo.io/&lt;ip_address&gt;/geo</code>. For example <a target="_blank" href="https://ipinfo.io/1.1.1.1/geo">https://ipinfo.io/1.1.1.1/geo</a></p>
+<p>Considering the response JSON. We'll map out the struct and add the following code to <code>track.go</code><em>,</em> keeping everything else the same as it was:</p>
+<pre><code class="lang-go"><span class="hljs-comment">// In trackCmd variable 👇</span>
+<span class="hljs-keyword">var</span> trackCmd = &amp;cobra.Command{
+    Use:   <span class="hljs-string">"track"</span>,
+    Short: <span class="hljs-string">"Track the IP with this command."</span>,
+    Long:  <span class="hljs-string">`Track the IP with this command.`</span>,
+    Run: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(cmd *cobra.Command, args []<span class="hljs-keyword">string</span>)</span></span> {
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(args) &gt; <span class="hljs-number">0</span> {
+            <span class="hljs-keyword">for</span> _, ipAddress := <span class="hljs-keyword">range</span> args {
+                showData(ipAddress)   <span class="hljs-comment">// 👈 Updated</span>
+            }
+        } <span class="hljs-keyword">else</span> {
+            fmt.Println(<span class="hljs-string">"Please provide an IP Address to track."</span>)
+        }
+    },
+}
+
+
+<span class="hljs-comment">// After the `func init()` function 👇</span>
+<span class="hljs-keyword">type</span> Ip <span class="hljs-keyword">struct</span> {
+    IP       <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"ip"`</span>
+    City     <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"city"`</span>
+    Loc      <span class="hljs-keyword">string</span> <span class="hljs-string">`json::loc`</span>
+    Region   <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"region"`</span>
+    Country  <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"country"`</span>
+    Org      <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"org"`</span>
+    Postal   <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"postal"`</span>
+    Timezone <span class="hljs-keyword">string</span> <span class="hljs-string">`json::"timezone"`</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">showData</span><span class="hljs-params">(ipAddress <span class="hljs-keyword">string</span>)</span></span> {
+    url := <span class="hljs-string">"https://ipinfo.io/"</span> + ipAddress + <span class="hljs-string">"/geo"</span>
+    responseByte := getData(url)
+
+    data := Ip{}
+
+    err := json.Unmarshal(responseByte, &amp;data)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Println(<span class="hljs-string">"Unable to unmarshal the response."</span>)
+    }
+
+    fmt.Println(<span class="hljs-string">"\nDATA FOUND :"</span>)
+
+    fmt.Printf(<span class="hljs-string">"IP: %s\nLAT &amp; LON: %s\nCITY: %s\nREGION: %s\nCOUNTRY: %s\nISP: %s\nPOSTAL: %s\nTIMEZONE: %s\n"</span>, data.IP, data.Loc, data.City, data.Region, data.Country, data.Org, data.Postal, data.Timezone)
+
+        fmt.Println(<span class="hljs-string">"\n"</span>)
+
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">getData</span><span class="hljs-params">(url <span class="hljs-keyword">string</span>)</span> []<span class="hljs-title">byte</span></span> {
+
+    response, err := http.Get(url)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Println(<span class="hljs-string">"Unable to get the response."</span>)
+    }
+
+    responseByte, err := io.ReadAll(response.Body)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Println(<span class="hljs-string">"Unable to read the response"</span>)
+    }
+
+    <span class="hljs-keyword">return</span> responseByte
+}
+</code></pre>
+<p>The function showData() gets the IP Address as a parameter and presents it in the terminal. On the other hand, the getData() function takes an URL as a parameter and returns the Response in byte format.</p>
+<h1 id="heading-adding-the-version-flag">Adding the Version Flag</h1>
+<p>Cobra automatically creates a global flag <code>--version</code> which users can invoke to determine the currently installed version of a particular CLI application. All we need to get this working with our IP Tracker is to set the Version field on the root command.</p>
+<p>Let’s update <code>cmd/root.go</code> and set rootCmd.Version to a new local variable. We use a variable - instead of hardcoding the version directly on rootCmd - so we can set the actual version number easily when invoking <code>go install</code>.</p>
+<p>Updating root.go:</p>
+<pre><code class="lang-go"><span class="hljs-keyword">var</span> version = <span class="hljs-string">"1.0.0"</span>
+
+<span class="hljs-keyword">var</span> (
+    rootCmd = &amp;cobra.Command{
+        Use:   <span class="hljs-string">"iptracker"</span>,
+        Version: version,
+        Short: <span class="hljs-string">"CLI App to track IP Addresses."</span>,
+        Long:  <span class="hljs-string">`CLI App to track IP Addresses.`</span>,
+    }
+)
+</code></pre>
+<p>Now, your application is ready. Run <code>go install</code> for one final time to build the latest changes and you should be now able to track different IP Addresses and also use the <code>--version</code> or <code>-v</code> flag.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670699528073-Screenshot%2520from%25202022-12-11%252000-39-18.png?type=webp" alt="img" /></p>
+<p>Tada!! You have successfully built a complete CLI Application. 🎉 Share this achievement on Twitter and with your friends. You should now have the foundational knowledge on how Cobra and CLI Apps in general work.</p>
+<h1 id="heading-conclusion">Conclusion</h1>
+<p>In conclusion, building a CLI application using Go and Cobra can be an effective and efficient way to create robust and user-friendly command-line tools. Go provides a simple and powerful programming language that is well-suited to building CLI applications, while Cobra offers a flexible and easy-to-use framework for organizing and managing the different commands and subcommands within an application.</p>
+<p>By leveraging the strengths of both Go and Cobra, we can quickly create powerful and feature-rich CLI applications that provide valuable functionality to users. Whether you are a developer looking to create a new CLI application or a user looking for a powerful and easy-to-use command-line tool, Go and Cobra provide a powerful and effective solution.</p>
+<h1 id="heading-get-the-source-code">Get the source code</h1>
+<p>You can find the entire source code on GitHub at <a target="_blank" href="https://github.com/hamees-sayed/ip-tracker">https://github.com/hamees-sayed/ip-tracker</a></p>]]></content><author><name>Hamees Ul Hasan Sayed</name></author><summary type="html"><![CDATA[My experience building a project while learning Golang]]></summary></entry><entry><title type="html">Git Internals 101: The Fundamentals of Git’s Internal Architecture (Part 3 of 3)</title><link href="https://hamees-sayed.github.io/blog/2023/git-p3/" rel="alternate" type="text/html" title="Git Internals 101: The Fundamentals of Git’s Internal Architecture (Part 3 of 3)" /><published>2023-11-15T00:00:00+00:00</published><updated>2023-11-15T00:00:00+00:00</updated><id>https://hamees-sayed.github.io/blog/2023/git-p3</id><content type="html" xml:base="https://hamees-sayed.github.io/blog/2023/git-p3/"><![CDATA[<d-contents>
+  <nav class="l-text figcaption">
+  <h3>Contents</h3>
+    <div><a href="#heading-what-is-a-git-branch">What is a Git branch?</a></div>
+    <div><a href="#heading-under-the-hood">Under the Hood</a></div>
+    <div><a href="#heading-here-comes-the-head">Here comes the HEAD</a></div>
+    <div><a href="#heading-git-merge">Git Merge</a></div>
+    <div><a href="#heading-conclusion">Conclusion</a></div>
+    <!-- <ul>
+       <li><a href="#subsection">Subsection</a></li>
+    </ul> -->
+  </nav>
+</d-contents>
+
+<p>In the previous blogs, we were introduced to two new concepts, namely Git Objects and how Git SHA works with it. A blob object stores the contents of a file, a tree contains other trees and blobs, and a commit is a snapshot of the main working tree. All of them are referenced by a hash of the SHA-1 Algorithm in Git. In this blog, we'll talk about branches, understand how they are implemented and what the commands git branch or git checkout actually do behind the scenes.</p>
+<h1 id="heading-what-is-a-git-branch">What is a Git branch?</h1>
+<p>We usually think about branches as a sequence of changes that are related to each other in an independent environment so that these changes don't affect the other branches until merged. For example, one branch is dedicated to a single feature and another branch to a specific bug fix.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670257539518-Screenshot%2520from%25202022-12-05%252021-54-42.png?type=webp" alt="img" /></p>
+<p>Under the hood, A branch is just a name referring to a commit. We could always reference a commit by SHA-1 Hash but humans usually prefer other forms to name an object. A branch is one way to reference a commit, but it's just that. In most repositories, the main line of development is done in a branch called "main" (or "master"). This is just a name and it is created when we use <code>git init</code> making it widely used. However, by no means it is special and we could use any other name we like.</p>
+<h1 id="heading-under-the-hood">Under the Hood</h1>
+<p>Typically, the branch points to the latest commit in the line of development we are currently working on. So I created one commit and then I made some changes and created another commit pointing to the previous commit. I'd usually have the branch point to the second commit which is currently the latest commit in the branch.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670270154476-Screenshot%2520from%25202022-12-06%252000-31-29.png?type=webp" alt="img" /></p>
+<p>To create another branch, we usually use the <code>git branch</code> command. By doing that we actually create another pointer. So if we called another branch called <strong>test</strong> by using <code>git branch test</code>, we are actually creating another pointer by the name of test that points to the same commit as the branch we are currently on (i.e main).</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670270428601-Screenshot%2520from%25202022-12-06%252001-30-06.png?type=webp" alt="img" /></p>
+<p>But there is still an unanswered question here, how does Git know what branch we are currently on? After all, when we commit, we commit to the current branch so Git has to know which branch it is.</p>
+<h1 id="heading-here-comes-the-head">Here comes the HEAD</h1>
+<p>Git knows what branch we are currently on by a special pointer called HEAD, usually HEAD points to a branch which then successively points to a commit.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670271423842-Screenshot%2520from%25202022-12-06%252001-46-47.png?type=webp" alt="img" /></p>
+<p>In some cases, HEAD can also point to a commit directly but we won't focus on that in this blog. To switch the active branch to test we can use the command <code>git checkout test</code> now I believe you can already guess what this command does. It just changes <strong>HEAD</strong> to point to test.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670271400625-Screenshot%2520from%25202022-12-06%252001-46-36.png?type=webp" alt="img" /></p>
+<p>By the way, we can also use <code>git checkout -b test</code> before creating the test branch. This command where <em>"-b"</em> is shorthand for "branch" is equivalent of <code>git branch test</code> to create the branch and then <code>git checkout test</code> to move HEAD to point to the test branch. Let's consider the current state, what happens if we make some changes and create a new commit using <code>git commit</code> which branch will be the new commit added to? The answer is <strong>test</strong> branch, as this is the active branch since HEAD points to it. So after the new commit object is created, the branch test will point it. Note, that HEAD still points to the test branch and this branch points to the new commit.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670272373826-Screenshot%2520from%25202022-12-06%252002-02-35.png?type=webp" alt="img" /></p>
+<p>So if we go back to the main branch now by using <code>git checkout main</code> what we actually do is move HEAD to point to the main branch again. Now that we moved <strong>HEAD</strong> to point towards the main branch, what happens if we create another commit, what branch will it be added to? I'll leave this question for you to answer. (Hint: the branch name starts with "m" :p)</p>
+<h1 id="heading-git-merge">Git Merge</h1>
+<p>Git merge allows us to combine multiple branches of code into a single branch. This is often used when two or more developers are working on different parts of a project simultaneously, and need to combine their changes into a single branch.</p>
+<p>Git merge works by comparing the code in the two branches that are being merged. If there are no conflicts, git will simply combine the two branches, creating a new commit known as "<em>Merge Commit</em>" that contains all of the changes from both branches.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1670273570491-Screenshot%2520from%25202022-12-06%252002-20-55.png?type=webp" alt="img" /></p>
+<p>As you can see the test branch is merged into the main branch resulting in a new merge commit.</p>
+<h1 id="heading-conclusion">Conclusion</h1>
+<p>So in this blog, we learned not only what Git branches are but also how they operate behind the scenes. With this, I complete the 3 part Git Internal series. Take your time to go through all the parts again, and understand how each term relates to each other to form the complete Git picture in your head.</p>
+<p>In conclusion, the Git objects, Git SHA, and Git branches are all important concepts in the world of version control. Understanding how these concepts work together can help us better collaborate on projects and maintain a clear and organized codebase. By learning how to use these tools effectively, we can improve our productivity and efficiency when working with Git. Thank you for following along with this three-part series on Git Internals :)</p>]]></content><author><name>Hamees Ul Hasan Sayed</name></author><summary type="html"><![CDATA[Series of articles explaining the fundamental components of Git]]></summary></entry><entry><title type="html">Git SHA 101: The Fundamentals of Git’s Internal Architecture (Part 2 of 3)</title><link href="https://hamees-sayed.github.io/blog/2023/git-p2/" rel="alternate" type="text/html" title="Git SHA 101: The Fundamentals of Git’s Internal Architecture (Part 2 of 3)" /><published>2023-11-10T00:00:00+00:00</published><updated>2023-11-10T00:00:00+00:00</updated><id>https://hamees-sayed.github.io/blog/2023/git-p2</id><content type="html" xml:base="https://hamees-sayed.github.io/blog/2023/git-p2/"><![CDATA[<d-contents>
+  <nav class="l-text figcaption">
+  <h3>Contents</h3>
+    <div><a href="#heading-how-it-all-began">How it all began</a></div>
+    <div><a href="#heading-hashing-algorithm">Hashing Algorithm</a></div>
+    <div><a href="#heading-sha1-in-git">SHA1 in Git</a></div>
+    <div><a href="#heading-conclusion">Conclusion</a></div>
+    <!-- <ul>
+       <li><a href="#subsection">Subsection</a></li>
+    </ul> -->
+  </nav>
+</d-contents>
+
+<p>In the previous chapter, we covered objects and got acquainted with hexadecimal digits known as hashes. Our aim in this blog is to explain what a hash is, specifically SHA-1, and what it does as well as how Git makes use of it.</p>
+<h1 id="heading-how-it-all-began">How it all began</h1>
+<p>Cryptography is the science of creating secrets. The word Cryptography comes from the word <em>Crypto</em> and <em>Graphy</em> roughly translating to secret writing. In order to make information secret, you use a cipher, an algorithm that converts plain text into ciphertext, which is basically gibberish.</p>
+<p>Ciphers have been used long before computers showed up. Julius Caesar used what's now called a Caesar Cipher to encrypt private correspondence. He would shift the letters in the message forward by 3 letters. So A became D and the word Crypto became FUBSWR.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/11561/1669493844416-rLH7MA9Nr.avif" alt="img" /></p>
+<p>Cryptography can take some useful bytes of data and then hash them with an algorithm making it nearly impossible for a computer to understand their true meaning.</p>
+<h1 id="heading-hashing-algorithm">Hashing Algorithm</h1>
+<p>The word <strong>Hash</strong> essentially means Mix or Scramble. Let's understand the term through an analogy:</p>
+<p>Imagine a new deck of cards. You write a step-by-step procedure for shuffling them. The end result is a mixed up deck of cards. If you followed the same procedure for every new same deck of cards you would get the same result.</p>
+<p>A hash function is like shuffling a deck of cards except you start with input and then pass it off to a hashing function, this function returns a fixed length value of what looks like alphanumeric gibberish.</p>
+<p>The important thing here is that the same input will produce the same output just like the deck of cards. However, it is very difficult for the computer to reverse engineer the hash and find out what the original message was. Hence, it is used by developers to store passwords and secret data.</p>
+<p>Implementing the SHA-1 Algorithm in Golang:</p>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">"crypto/sha1"</span>
+    <span class="hljs-string">"encoding/hex"</span>
+    <span class="hljs-string">"fmt"</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+
+    password := <span class="hljs-string">"Password123"</span>
+    algorithm := sha1.New()
+    algorithm.Write([]<span class="hljs-keyword">byte</span>(password))
+    sha1_hash := hex.EncodeToString(algorithm.Sum(<span class="hljs-literal">nil</span>))
+
+    fmt.Println(<span class="hljs-string">`'Password123' in hashed format is: `</span>, sha1_hash)
+}
+</code></pre>
+<p>You can run the code here <a target="_blank" href="https://go.dev/play/p/OIgkmeDJr1I">https://go.dev/play/p/OIgkmeDJr1I</a></p>
+<h1 id="heading-sha1-in-git">SHA1 in Git</h1>
+<p>The SHA1 or "Secure Hash Algorithm 1" is a cryptographic hashing function that takes an input and produces a 160-bit (20-byte/40-characters) hash value known as a message digest. SHA-1 was developed as an improvement on the original algorithm, called SHA-0. These hash algorithms are excellent for validating data integrity since even a small change to the data will result in a different hash output.</p>
+<p>The following exercise will help you understand SHA in Git:</p>
+<ul>
+<li>I'll start by opening two different terminal windows to create a directory in one window and watch how Git works in real time in another window.</li>
+</ul>
+<blockquote>
+<p>To follow along, the commands will be the same for all the UNIX-based terminals, if you are in windows you can use Git Bash.</p>
+</blockquote>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669722991609-Screenshot%2520from%25202022-11-29%252017-26-21.png?type=webp" alt="img" /></p>
+<p>So in the left terminal, I created a directory by running <code>mkdir git-sha</code> and navigated to that directory by running <code>cd git-sha</code> in the terminal on the right side. Along with that, I ran the command <code>watch -n 1 -d find .</code> in the right side terminal to observe the contents of that directory.</p>
+<ul>
+<li>Next I'll initialize the directory we previously created, Git basically creates a database in my local project to manage the changes I make to the file contents.</li>
+</ul>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669723423101-Screenshot%2520from%25202022-11-29%252017-33-32.png?type=webp" alt="img" /></p>
+<p>As soon as I do <code>git init</code> you can see on the right side, it created an initial layout of the file with template sample files in there, which I'm going to actually get rid of by running <code>rm .git/hooks/*.sample</code></p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669723774711-Screenshot%2520from%25202022-11-29%252017-39-25.png?type=webp" alt="img" /></p>
+<ul>
+<li>Alright, let's see what happens when we create a file.</li>
+</ul>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669724132834-Screenshot%2520from%25202022-11-29%252017-45-20.png?type=webp" alt="img" /></p>
+<ul>
+<li>You can see on the right side we created an object on the disk. Let's take a look at the contents inside that object.</li>
+</ul>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669724427542-Screenshot%2520from%25202022-11-29%252017-50-15.png?type=webp" alt="img" /></p>
+<p>If you remember what we discussed in the previous part of this series, the blob (or a file) just contains binary streams of data and that's what we see here.</p>
+<ul>
+<li>To see the actual content of the file, we have to use <code>git cat-file -p a733b9</code><em>. "a733b9"</em> is the initial hash of the object.</li>
+</ul>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669724784586-Screenshot%2520from%25202022-11-29%252017-56-19.png?type=webp" alt="img" /></p>
+<p>What's interesting is that file on the disk with just SHA has raw contents, no where does it actually here talk about the file name or its metadata. The actual file reference is in <code>.git/index</code> which is also the temporary staging directory.</p>
+<ul>
+<li>For the final step, we'll commit the changes and see what happens.</li>
+</ul>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669725239082-Screenshot%2520from%25202022-11-29%252018-03-46.png?type=webp" alt="img" /></p>
+<p>Now we've got 3 objects on the screen out of which two have been created by the commit we just did. If we see the type of newly created SHA object by running <code>git cat-file -t c4b5e1</code>, it is referencing the main working tree and will contain the <em>foo.txt</em> file we added earlier.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/700x/11561/1669725528561-Screenshot%2520from%25202022-11-29%252018-07-08.png?type=webp" alt="img" /></p>
+<h1 id="heading-conclusion">Conclusion</h1>
+<p>In the previous blog, we learned about a few terms that you should now be able to understand more clearly. Furthermore, we also observed the local git database in real time and learned how it operates under the hood through an exercise.</p>
+<p>You now have an understanding of key parts of SHA in Git, what it is, where it is used and how you use it. This should be more than enough for now to emphasize their importance. Now that you have learned some techniques, you are ready to dig deeper on your own! Stay tuned for the next blog where we'll learn Git branches :)</p>]]></content><author><name>Hamees Ul Hasan Sayed</name></author><summary type="html"><![CDATA[Series of articles explaining the fundamental components of Git]]></summary></entry><entry><title type="html">Git Objects 101: The Fundamentals of Git’s Internal Architecture (Part 1 of 3)</title><link href="https://hamees-sayed.github.io/blog/2023/git-p1/" rel="alternate" type="text/html" title="Git Objects 101: The Fundamentals of Git’s Internal Architecture (Part 1 of 3)" /><published>2023-11-05T00:00:00+00:00</published><updated>2023-11-05T00:00:00+00:00</updated><id>https://hamees-sayed.github.io/blog/2023/git-p1</id><content type="html" xml:base="https://hamees-sayed.github.io/blog/2023/git-p1/"><![CDATA[<d-contents>
+  <nav class="l-text figcaption">
+  <h3>Table of Content</h3>
+    <div><a href="#heading-introduction">Introduction</a></div>
+    <div><a href="#heading-blob">Blob</a></div>
+    <div><a href="#heading-tree">Tree</a></div>
+    <div><a href="#heading-commit">Commit</a></div>
+    <div><a href="#heading-conclusion">Conclusion</a></div>
+    <!-- <ul>
+       <li><a href="#subsection">Subsection</a></li>
+    </ul> -->
+  </nav>
+</d-contents>
+<p><br /></p>
+
+<p>Many of us use Git on a daily basis but how many of us know what goes on under the hood? For example:</p>
+<ol>
+<li><p>What happens when we do <code>git commit</code>?</p>
+</li>
+<li><p>What are git branches?</p>
+</li>
+<li><p>What are git trees and blobs?</p>
+</li>
+<li><p>What is SHA and why is it used?</p>
+</li>
+</ol>
+<p>In this 3 part series, I'll try to answer each one of these questions briefly.</p>
+<h2 id="heading-introduction">Introduction</h2>
+<p>In this blog, I'll cover the main 3 objects, namely Blog, Tree and Commit. Let us start by thinking of Git as a repository for maintaining a file system, and more specifically snapshots of that file system.</p>
+<p>A file system usually begins with a root directory which contains other directories, these directories contain other directories and so on...</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668869179559-verzeichnisstruktur-layer-example-1.png?type=webp" alt="img" /></p>
+<h1 id="heading-blob">Blob</h1>
+<p>In Git, the contents of files are stored in objects called blobs - Binary Large Objects. The difference between blobs and files is that, unlike blobs, files contain metadata, for example, it remembers when the file was created. Blobs on the other hand are just content, binary streams of data (F3 H2 45 9D).</p>
+<p>A blob doesn't register its creation date, its name or basically anything but its content. Every blob in Git is identified by its SHA-1 Hash (We'll understand SHA-1 and Hashing algorithm in Part 2 of this series). SHA-1 Hash consists of 20 bytes, usually represented by 40 characters in hexadecimal form. In this blog, I'll represent the hash only by its first 5 characters.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668871542638-Screenshot%2520from%25202022-11-19%252020-55-27.png?type=webp" alt="img" /></p>
+<h1 id="heading-tree">Tree</h1>
+<p>In Git, the equivalent of a directory is a Tree, a Tree is basically a directory referring to blobs as well as other trees. Trees are identified by their SHA-1 Hashes. Referring to these objects (blobs, trees and commits) happens via the SHA-1 Hash of the object. Note that the Tree - <em>ABCD5</em> points to the blobs <em>K81R4</em> as <em>photo.png and J72I5</em> as <em>blog.txt.</em></p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668871592271-Screenshot%2520from%25202022-11-19%252020-56-19.png?type=webp" alt="img" /></p>
+<p>This diagram is equivalent to a file system with the root directory that has two files, <em>photo.png</em> and <em>blog.txt.</em></p>
+<p>Now it's time to take a snapshot of that file system and store all the files that existed at that time along with their contents.</p>
+<h1 id="heading-commit">Commit</h1>
+<p>In Git a snapshot is a commit, a commit object includes a pointer to the main tree which is the root directory. The commit also stores metadata such as the commit author's name, a commit message and commit time. Of course, commit objects are also identified by their SHA-1 Hashes, these are the hashes we are used to seeing when we use <code>git log</code>.</p>
+<p>Note that every commit stores the entire snapshot, not just differences from the previous commit.</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668872306616-Screenshot%2520from%25202022-11-19%252021-08-19.png?type=webp" alt="img" /></p>
+<p>How does that work? Wouldn't that mean that we have to store a lot of data on every single commit? Well, let's examine what happens when we change the contents of a file.</p>
+<p>Say that we edit blog.txt and add <em>.com</em> to it, that is we change the content from <em>Showwcase</em> to <a target="_blank" href="http://Showwcase.com"><em><a href="http://Showwcase.com" class="autolinkedURL autolinkedURL-url" target="_blank">Showwcase.com</a></em></a><em>.</em></p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668873101306-Screenshot%2520from%25202022-11-19%252021-21-14.png?type=webp" alt="img" /></p>
+<p>Well, this change would mean that we have a new blob with a new SHA-1 Hash, this makes sense as the content of this new <em>blog.txt</em> which contains <a target="_blank" href="http://Showwcase.com"><em><a href="http://Showwcase.com" class="autolinkedURL autolinkedURL-url" target="_blank">Showwcase.com</a></em></a> is different from the previous <em>blog.txt</em> which contained <em>Showwcase</em>. Since we have a new Hash, the tree listing should also change, after all our tree no longer points to <em>J72I5</em> Hash but rather the new blob with Hash <em>C75N6.</em> As we change the tree's content we also change its Hash and now since the hash of the main working tree is changed, consequently, we are almost ready to create a new commit object. And it seems like we are going to store the entire file system once more, but is that really necessary?</p>
+<p><img loading="lazy" src="https://project-assets.showwcase.com/1065x/11561/1668872575348-Screenshot%2520from%25202022-11-19%252021-12-42.png?type=webp" alt="img" /></p>
+<p>Actually, some objects, specifically <em>photo.png</em> haven't changed since the last commit. So as long as the object doesn't change, we don't store it again. In this case, we don't need to store hash <em>K81R4 once more.</em></p>
+<p>At this point, we can create our commit object. Since this commit is not the first commit, it has a parent, <em>commits - B4848</em>, which we committed earlier.</p>
+<h1 id="heading-conclusion">Conclusion</h1>
+<p>We learned three Git Objects:</p>
+<ul>
+<li><p>Blob - It consists of the contents of a file.</p>
+</li>
+<li><p>Tree - A directory listing of Blobs and Trees.</p>
+</li>
+<li><p>Commit - It is a snapshot of the working tree.</p>
+</li>
+</ul>
+<p>In the first part of the blog, we covered the basic objects of git. In the next part, we'll learn about SHA-1 Hash Algorithm and understand how it works inside Git. After that, we'll understand branches and how they relate to the terms we covered in this blog.</p>]]></content><author><name>Hamees Ul Hasan Sayed</name></author><summary type="html"><![CDATA[Series of articles explaining the fundamental components of Git]]></summary></entry></feed>
